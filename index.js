@@ -52,7 +52,7 @@ async function main() {
                 await new Promise(resolve => setTimeout(resolve, 5000)); // Retry after 5 seconds
             } else {
                 console.error('Failed to perform health check:', error.message);
-                process.exit(1); // Exit the application
+                process.exit(1); 
             }
         }
     }
@@ -60,5 +60,5 @@ async function main() {
 
 main().catch(error => {
     console.error('An unexpected error occurred:', error);
-    process.exit(1); // Exit the application
+    process.exit(1); 
 });
