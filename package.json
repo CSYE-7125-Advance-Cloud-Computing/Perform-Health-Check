@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "kafkajs": "^2.2.4"
+    "axios": "^1.6.7",
+    "kafkajs": "^2.2.4",
+    "moment": "^2.30.1"
   }
 }
