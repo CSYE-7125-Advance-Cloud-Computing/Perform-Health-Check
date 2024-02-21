@@ -54,15 +54,36 @@ async function main() {
         url = `http://${process.env.URI}`;
     }
 
-    // Perform health check
+    // Retry logic
+    const maxRetries = process.env.MAX_RETRIES || 3;
+    let retryCount = 0;
+    let result = null;
+
+    while (retryCount <= maxRetries) {
+        try {
+            result = await performHealthCheck(url);
+            break; // Exit loop if health check succeeds
+        } catch (error) {
+            console.error('Health check failed. Retrying...');
+            retryCount++;
+        }
+    }
+
+    if (!result) {
+        console.error('Failed to perform health check after maximum retries.');
+        process.exit(1);
+    }
+
+    // Publish result to Kafka
     try {
-        const result = await performHealthCheck(url);
         await publishToKafka(result, kafkaConfig);
         console.log('Health check performed and result published to Kafka.');
     } catch (error) {
-        console.error('Failed to perform health check:', error.message);
+        console.error('Failed to publish health check result to Kafka:', error.message);
         process.exit(1);
     }
+
+    process.exit(0); 
 }
 
 main().catch(error => {
