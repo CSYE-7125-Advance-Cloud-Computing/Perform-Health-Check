@@ -24,6 +24,9 @@ pipeline {
                         env.GIT_LOCAL_BRANCH='main'
                         sh 'npx semantic-release'
                     }
+
+                    LATEST_TAG = sh(script: 'git describe --tags --abbrev=0', returnStdout: true).trim()
+
                 }
             }                    
         }
