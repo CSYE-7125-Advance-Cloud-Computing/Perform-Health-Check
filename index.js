@@ -2,6 +2,8 @@ const { Kafka } = require('kafkajs');
 const axios = require('axios');
 const moment = require('moment-timezone');
 
+require('dotenv').config();
+
 async function performHealthCheck(url) {
     try {
         const response = await axios.get(url, { validateStatus: (status) => true });
@@ -41,6 +43,7 @@ async function publishToKafka(result, kafkaConfig) {
 
 async function main() {
     // Load Kafka configuration
+
     const kafkaConfig = {
         bootstrapServers: process.env.KAFKA_SERVER,
         topic: 'healthcheck'

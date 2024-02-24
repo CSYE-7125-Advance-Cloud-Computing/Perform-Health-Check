@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    
-    tools{
-        nodejs 'nodejs'
-    }
 
     environment {
         DOCKERHUB_CREDENTIALS = 'docker-hub-credentials'
@@ -19,16 +15,15 @@ pipeline {
         }
 
         stage('Semantic Release') {
+            tools {
+                nodejs "nodejs"
+            }
             steps {
                 script {
                     withCredentials([string(credentialsId: GITHUB_TOKEN, variable: 'GH_TOKEN')]) {
                         env.GIT_LOCAL_BRANCH='main'
-                        sh "npm i -g semantic-release"
-                        sh "npm install -g @semantic-release/git"
-                        sh "semantic-release"
+                        sh 'npx semantic-release'
                     }
-                    
-                    LATEST_TAG = sh(script: 'git describe --tags --abbrev=0', returnStdout: true).trim()
                 }
             }                    
         }
