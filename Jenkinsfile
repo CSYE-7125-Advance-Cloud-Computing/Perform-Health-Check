@@ -31,23 +31,19 @@ pipeline {
             }                    
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build("${DOCKER_IMAGE_NAME}:${LATEST_TAG}")
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
+        stage('Build & Push Docker Image') {
             steps {
                 script {
                     withDockerRegistry(credentialsId: DOCKERHUB_CREDENTIALS) {
-                        docker.image("${DOCKER_IMAGE_NAME}:${LATEST_TAG}").push("${LATEST_TAG}")
+                        sh "docker buildx ls"
+                        sh "docker buildx create --name webapplication"
+                        sh "docker buildx use webapplication"
+                        sh "docker buildx build --push --platform linux/amd64,linux/arm64 --tag $DOCKER_IMAGE_NAME:$LATEST_TAG --tag $DOCKER_IMAGE_NAME:latest ."
                     }
                 }
             }
         }
+
     }
 
     post {
